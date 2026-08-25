@@ -1,0 +1,4 @@
+mcp>=2.0,<3
+httpx>=0.28,<1
+python-dotenv>=1.0,<2
+uvicorn[standard]>=0.35,<1
