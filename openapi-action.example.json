@@ -1,0 +1,930 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SalesFinder Read-only Connector for ChatGPT",
+    "description": "Read-only proxy between a Custom GPT Action and SalesFinder API. It keeps SalesFinder credentials server-side, caches the Bearer token and enforces a minimum interval between SalesFinder requests.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Health",
+        "operationId": "healthCheck",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Healthcheck"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sf/product/info": {
+      "post": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Product Info",
+        "description": "Static product data: title, brand, seller, marketplace URL, first/last seen dates.",
+        "operationId": "getProductInfo",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Getproductinfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/sf/product/overview": {
+      "post": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Product Overview",
+        "description": "Aggregated metrics for SKU list: price, sales, revenue, reviews, rating, stock, keywords.",
+        "operationId": "getProductOverview",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Getproductoverview"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/sf/product/days": {
+      "post": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Product Days",
+        "description": "Daily dynamics: sales, revenue, stock, price, reviews and rating.",
+        "operationId": "getProductDailyMetrics",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Getproductdailymetrics"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/sf/product/keywords": {
+      "post": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Product Keywords",
+        "description": "Search queries/keywords and SKU positions for the selected period.",
+        "operationId": "getProductKeywords",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Getproductkeywords"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/sf/category/search": {
+      "post": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "Category Search",
+        "description": "Find SalesFinder category IDs by marketplace, period and optional category name.",
+        "operationId": "searchCategories",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategorySearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Searchcategories"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/sf/category/report": {
+      "post": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "Category Report",
+        "description": "Create a SalesFinder category report. Response contains reportId; report may need time to build.",
+        "operationId": "createCategoryReport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Createcategoryreport"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/sf/category/overview": {
+      "post": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "Category Overview",
+        "description": "Get category-level totals/dynamics for an already-created reportId.",
+        "operationId": "getCategoryOverview",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryOverviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Getcategoryoverview"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/sf/category/products": {
+      "post": {
+        "tags": [
+          "categories"
+        ],
+        "summary": "Category Products",
+        "description": "Get products from a category report, with common analytical filters and sorting.",
+        "operationId": "getCategoryProducts",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryProductsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Getcategoryproducts"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CategoryFilter": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "sku": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sku"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "categories": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "p_reviews": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Total reviews"
+          },
+          "rating": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "remains": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sold": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revenue": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "avg_sold": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "avg_revenue": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "days": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "losses": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "price": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "keywords": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "new_reviews": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RangeNumber"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "seller": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seller"
+          }
+        },
+        "type": "object",
+        "title": "CategoryFilter"
+      },
+      "CategoryOverviewRequest": {
+        "properties": {
+          "reportId": {
+            "type": "string",
+            "title": "Reportid"
+          },
+          "filter": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CategoryFilter"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "reportId"
+        ],
+        "title": "CategoryOverviewRequest"
+      },
+      "CategoryProductsRequest": {
+        "properties": {
+          "reportId": {
+            "type": "string",
+            "title": "Reportid"
+          },
+          "take": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Take",
+            "default": 20
+          },
+          "skip": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Skip",
+            "default": 0
+          },
+          "sort": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sort",
+            "description": "SalesFinder sort field, e.g. revenue, sold, price",
+            "default": "revenue"
+          },
+          "sort_dir": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "title": "Sort Dir",
+            "default": "desc"
+          },
+          "filter": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CategoryFilter"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "reportId"
+        ],
+        "title": "CategoryProductsRequest"
+      },
+      "CategoryReportRequest": {
+        "properties": {
+          "marketPlace": {
+            "type": "string",
+            "enum": [
+              "wb",
+              "ozon"
+            ],
+            "title": "Marketplace"
+          },
+          "category": {
+            "type": "integer",
+            "title": "Category",
+            "description": "SalesFinder category ID"
+          },
+          "dateFrom": {
+            "type": "string",
+            "format": "date",
+            "title": "Datefrom"
+          },
+          "dateTo": {
+            "type": "string",
+            "format": "date",
+            "title": "Dateto"
+          },
+          "fbs": {
+            "type": "boolean",
+            "title": "Fbs",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "marketPlace",
+          "category",
+          "dateFrom",
+          "dateTo"
+        ],
+        "title": "CategoryReportRequest"
+      },
+      "CategorySearchRequest": {
+        "properties": {
+          "marketPlace": {
+            "type": "string",
+            "enum": [
+              "wb",
+              "ozon"
+            ],
+            "title": "Marketplace"
+          },
+          "dateFrom": {
+            "type": "string",
+            "format": "date",
+            "title": "Datefrom"
+          },
+          "dateTo": {
+            "type": "string",
+            "format": "date",
+            "title": "Dateto"
+          },
+          "categoryName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Categoryname"
+          },
+          "take": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Take",
+            "default": 10
+          },
+          "skip": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Skip",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "marketPlace",
+          "dateFrom",
+          "dateTo"
+        ],
+        "title": "CategorySearchRequest"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ProductRequest": {
+        "properties": {
+          "mp": {
+            "type": "string",
+            "enum": [
+              "wb",
+              "ozon"
+            ],
+            "title": "Mp",
+            "description": "Marketplace"
+          },
+          "sku": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Sku",
+            "description": "Marketplace SKU/article IDs"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date",
+            "description": "Start date"
+          },
+          "date2": {
+            "type": "string",
+            "format": "date",
+            "title": "Date2",
+            "description": "End date"
+          },
+          "fbs": {
+            "type": "integer",
+            "enum": [
+              0,
+              1
+            ],
+            "title": "Fbs",
+            "description": "Include seller warehouse/FBS data",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "mp",
+          "sku",
+          "date",
+          "date2"
+        ],
+        "title": "ProductRequest"
+      },
+      "RangeNumber": {
+        "properties": {
+          "min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min"
+          },
+          "max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          }
+        },
+        "type": "object",
+        "title": "RangeNumber"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "APIKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://YOUR-DOMAIN.example.com"
+    }
+  ]
+}
